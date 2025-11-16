@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Justin's Holiday Gift Wishlist</title>
+    <style>
+        :root {
+            --primary-color: #c41e3a;
+            --secondary-color: #165b33;
+            --gold-color: #ffd700;
+            --bg-color: #faf9f6;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --text-light: #666666;
+            --border-color: #e0e0e0;
+            --hover-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 15px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '❄️';
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 40px;
+            opacity: 0.3;
+        }
+
+        header::after {
+            content: '🎁';
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 40px;
+            opacity: 0.3;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .edit-mode-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 15px 25px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .edit-mode-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+        }
+
+        .edit-mode-btn.active {
+            background: var(--primary-color);
+        }
+
+        .gift-list {
+            display: grid;
+            gap: 25px;
+            padding: 0 10px;
+        }
+
+        .gift-item {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+        }
+
+        .gift-item:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--hover-shadow);
+            border-color: var(--gold-color);
+        }
+
+        .gift-header {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .gift-number {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .gift-title {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: var(--text-color);
+            flex-grow: 1;
+        }
+
+        .gift-description {
+            color: var(--text-light);
+            line-height: 1.5;
+            margin-bottom: 20px;
+            padding-left: 50px;
+        }
+
+        .price-badge {
+            display: inline-block;
+            background: var(--gold-color);
+            color: var(--text-color);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            margin-left: 50px;
+        }
+
+        .best-deal {
+            background: var(--secondary-color);
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .gift-link {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            margin-left: 50px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .gift-link:hover {
+            background: #a01729;
+            transform: translateX(5px);
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #ff4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            display: none;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .delete-btn:hover {
+            background: #cc0000;
+            transform: scale(1.1);
+        }
+
+        .edit-mode .delete-btn {
+            display: block;
+        }
+
+        .edit-mode .gift-item {
+            border: 2px dashed var(--border-color);
+        }
+
+        .editable {
+            background: transparent;
+            border: none;
+            width: 100%;
+            font: inherit;
+            color: inherit;
+            outline: none;
+        }
+
+        .edit-mode .editable {
+            background: #f9f9f9;
+            border-bottom: 2px solid var(--primary-color);
+            padding: 4px;
+        }
+
+        .add-item-btn {
+            display: none;
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .add-item-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .edit-mode .add-item-btn {
+            display: block;
+        }
+
+        .instructions {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 30px 0;
+            display: none;
+        }
+
+        .edit-mode .instructions {
+            display: block;
+        }
+
+        .instructions h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+
+        .instructions ul {
+            margin-left: 20px;
+            color: #856404;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: var(--text-light);
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .gift-title {
+                font-size: 1.2em;
+            }
+            
+            .gift-description,
+            .price-badge,
+            .gift-link {
+                padding-left: 0;
+                margin-left: 50px;
+            }
+            
+            .edit-mode-btn {
+                bottom: 20px;
+                right: 20px;
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+        }
+
+        .highlight-section {
+            background: linear-gradient(to right, #fff9e6, #fffdf5);
+            border-left: 4px solid var(--gold-color);
+            padding: 15px;
+            margin: 15px 0 15px 50px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .price-comparison {
+            display: grid;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .price-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            font-size: 0.95em;
+        }
+
+        .price-option.best-price {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            font-weight: 600;
+        }
+
+        .retailer-name {
+            color: var(--text-light);
+        }
+
+        .price-amount {
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+
+        .url-input-container {
+            margin: 15px 0 15px 50px;
+            display: none;
+        }
+
+        .edit-mode .url-input-container {
+            display: block;
+        }
+
+        .url-input {
+            width: 100%;
+            max-width: 500px;
+            padding: 10px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: #f9f9f9;
+        }
+
+        .url-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(196, 30, 58, 0.1);
+        }
+
+        .url-input-label {
+            display: block;
+            font-size: 0.9em;
+            color: var(--text-light);
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎄 Justin's Holiday Gift Wishlist 🎁</h1>
+            <p class="subtitle">My 2025 Holiday Wishes</p>
+        </header>
+
+        <button class="edit-mode-btn" onclick="toggleEditMode()">✏️ Edit List</button>
+
+        <div class="instructions">
+            <h3>📝 How to Edit This List:</h3>
+            <ul>
+                <li>Click on any text to edit it directly</li>
+                <li>Use the red ✕ button to remove items</li>
+                <li>Click "Add New Item" to add more gifts</li>
+                <li>For new items, paste a product URL in the input field to automatically create a link</li>
+                <li>Click "Edit List" again to save changes</li>
+                <li>Save this file (Ctrl+S) after making changes</li>
+            </ul>
+        </div>
+
+        <div class="gift-list" id="giftList">
+            <!-- Item 1: Govee Uplighter Floor Lamp -->
+            <div class="gift-item">
+                <button class="delete-btn" onclick="deleteItem(this)">✕</button>
+                <div class="gift-header">
+                    <div class="gift-number">1</div>
+                    <h2 class="gift-title editable" contenteditable="false">Govee Uplighter Floor Lamp</h2>
+                </div>
+                <p class="gift-description editable" contenteditable="false">
+                    Smart RGB floor lamp with customizable lighting effects and app control.<br>
+                    Creates immersive ambient lighting for any room with music sync capabilities.
+                </p>
+                <span class="price-badge editable" contenteditable="false">$149.99</span>
+                <br>
+                <a href="https://www.amazon.com/s?k=Govee+Uplighter+Floor+Lamp" target="_blank" class="gift-link">Amazon →</a>
+                <a href="https://us.govee.com/products/govee-uplighter-floor-lamp" target="_blank" class="gift-link">Govee Official →</a>
+            </div>
+
+            <!-- Item 2: TEAC AD-850 -->
+            <div class="gift-item">
+                <button class="delete-btn" onclick="deleteItem(this)">✕</button>
+                <div class="gift-header">
+                    <div class="gift-number">2</div>
+                    <h2 class="gift-title editable" contenteditable="false">TEAC AD-850 Cassette Deck with CD Player</h2>
+                </div>
+                <p class="gift-description editable" contenteditable="false">
+                    Premium combo unit featuring cassette deck and CD player with USB recording.<br>
+                    Perfect for digitizing vintage audio collections with high-quality playback.
+                </p>
+                <span class="price-badge editable" contenteditable="false">$599.99</span>
+                <br>
+                <a href="https://www.amazon.com/s?k=TEAC+AD-850" target="_blank" class="gift-link">Amazon →</a>
+                <a href="https://teacusa.com/products/ad-850-cassette-deck-cd-player" target="_blank" class="gift-link">TEAC Official →</a>
+            </div>
+
+            <!-- Item 3: Adjustable Dumbbells -->
+            <div class="gift-item">
+                <button class="delete-btn" onclick="deleteItem(this)">✕</button>
+                <div class="gift-header">
+                    <div class="gift-number">3</div>
+                    <h2 class="gift-title editable" contenteditable="false">Adjustable Dumbbells - Best Price Comparison</h2>
+                </div>
+                <p class="gift-description editable" contenteditable="false">
+                    Space-saving adjustable dumbbells that replace multiple fixed weights.<br>
+                    Perfect for home gym strength training with quick weight adjustments.
+                </p>
+                
+                <div class="highlight-section">
+                    <strong>🏆 BEST VALUE WINNER:</strong>
+                    <div class="price-comparison">
+                        <div class="price-option best-price">
+                            <span><strong>NordicTrack Select-A-Weight 55 lb</strong></span>
+                            <span class="price-amount">$349-399 <span class="best-deal">Lowest Price</span></span>
+                            <br>
+                            <a href="https://www.amazon.com/NordicTrack-Dumbbells/dp/B0B34QM5W3" target="_blank" class="gift-link" style="margin-left: 0; margin-top: 5px;">Amazon →</a>
+                            <a href="https://www.nordictrack.com/strength/select-a-weight-55-lb-dumbbells" target="_blank" class="gift-link" style="margin-left: 0; margin-top: 5px;">NordicTrack →</a>
+                        </div>
+                        <div class="price-option">
+                            <span>PowerBlock Pro 50 Series</span>
+                            <span class="price-amount">$549</span>
+                            <br>
+                            <a href="https://www.amazon.com/s?k=PowerBlock+Pro+50" target="_blank" class="gift-link" style="margin-left: 0; margin-top: 5px;">Amazon →</a>
+                            <a href="https://powerblock.com/product/pro-series/" target="_blank" class="gift-link" style="margin-left: 0; margin-top: 5px;">PowerBlock →</a>
+                        </div>
+                        <div class="price-option">
+                            <span>Core Home Fitness (5-50 lbs)</span>
+                            <span class="price-amount">$369-399</span>
+                            <br>
+                            <a href="https://www.amazon.com/s?k=Core+Home+Fitness+adjustable+dumbbells" target="_blank" class="gift-link" style="margin-left: 0; margin-top: 5px;">Amazon →</a>
+                            <a href="https://corehomefitness.com/products/adjustable-dumbbell-set-and-stand-bundle" target="_blank" class="gift-link" style="margin-left: 0; margin-top: 5px;">Core Fitness →</a>
+                        </div>
+                        <div class="price-option">
+                            <span>Ativafit 55 lbs (Pair)</span>
+                            <span class="price-amount">$499 (currently sold out)</span>
+                            <br>
+                            <a href="https://www.amazon.com/s?k=Ativafit+55+lbs+dumbbells" target="_blank" class="gift-link" style="margin-left: 0; margin-top: 5px;">Amazon →</a>
+                            <a href="https://www.walmart.com/search?q=Ativafit+adjustable+dumbbells" target="_blank" class="gift-link" style="margin-left: 0; margin-top: 5px;">Walmart →</a>
+                        </div>
+                    </div>
+                    <p style="margin-top: 10px; font-size: 0.9em; color: #666;">
+                        <strong>Recommendation:</strong> NordicTrack offers the best overall value with 15 weight settings (10-55 lbs), 
+                        currently available at multiple retailers for under $400. Often on sale for $314-349.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Item 4: The Wire Blu-ray -->
+            <div class="gift-item">
+                <button class="delete-btn" onclick="deleteItem(this)">✕</button>
+                <div class="gift-header">
+                    <div class="gift-number">4</div>
+                    <h2 class="gift-title editable" contenteditable="false">The Wire: The Complete Series - Region Free Blu-ray</h2>
+                </div>
+                <p class="gift-description editable" contenteditable="false">
+                    All five seasons of the acclaimed HBO series in high definition.<br>
+                    Region-free Blu-ray collection with bonus features and behind-the-scenes content.
+                </p>
+                <span class="price-badge editable" contenteditable="false">Check Amazon for current price</span>
+                <br>
+                <a href="https://a.co/d/2678O97" target="_blank" class="gift-link">Amazon →</a>
+                <a href="https://www.bestbuy.com/product/the-wire-the-complete-series-blu-ray-new-box-art-blu-ray/J3KZRPCS2T" target="_blank" class="gift-link">Best Buy →</a>
+            </div>
+        </div>
+
+        <button class="add-item-btn" onclick="addNewItem()">+ Add New Item</button>
+
+        <footer>
+            <p>💝 Thank you for considering my wishlist! 💝</p>
+            <p style="margin-top: 10px;">Last updated: <span id="updateDate"></span></p>
+        </footer>
+    </div>
+
+    <script>
+        // Set current date
+        document.getElementById('updateDate').textContent = new Date().toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+        });
+
+        // Toggle edit mode
+        function toggleEditMode() {
+            const btn = document.querySelector('.edit-mode-btn');
+            const body = document.body;
+            const editables = document.querySelectorAll('.editable');
+            
+            body.classList.toggle('edit-mode');
+            
+            if (body.classList.contains('edit-mode')) {
+                btn.textContent = '💾 Save Changes';
+                btn.classList.add('active');
+                editables.forEach(el => el.contentEditable = 'true');
+            } else {
+                btn.textContent = '✏️ Edit List';
+                btn.classList.remove('active');
+                editables.forEach(el => el.contentEditable = 'false');
+                // Save to localStorage
+                saveList();
+            }
+        }
+
+        // Delete item
+        function deleteItem(btn) {
+            if (confirm('Are you sure you want to remove this item?')) {
+                btn.parentElement.remove();
+                updateNumbers();
+            }
+        }
+
+        // Add new item
+        function addNewItem() {
+            const list = document.getElementById('giftList');
+            const itemCount = list.children.length + 1;
+            
+            const newItem = document.createElement('div');
+            newItem.className = 'gift-item';
+            newItem.innerHTML = `
+                <button class="delete-btn" onclick="deleteItem(this)">✕</button>
+                <div class="gift-header">
+                    <div class="gift-number">${itemCount}</div>
+                    <h2 class="gift-title editable" contenteditable="true">New Gift Item</h2>
+                </div>
+                <p class="gift-description editable" contenteditable="true">
+                    Enter description line 1<br>
+                    Enter description line 2
+                </p>
+                <span class="price-badge editable" contenteditable="true">$0.00</span>
+                <br>
+                <div class="url-input-container">
+                    <label class="url-input-label">🔗 Paste Product URL:</label>
+                    <input type="url" class="url-input" placeholder="https://www.example.com/product" oninput="updateLinkFromUrl(this)">
+                </div>
+                <a href="#" target="_blank" class="gift-link">Add Link →</a>
+            `;
+            
+            list.appendChild(newItem);
+        }
+
+        // Update link when URL is entered
+        function updateLinkFromUrl(input) {
+            const url = input.value.trim();
+            const giftItem = input.closest('.gift-item');
+            const link = giftItem.querySelector('.gift-link');
+            
+            if (url) {
+                // Validate URL format
+                try {
+                    new URL(url);
+                    link.href = url;
+                    // Update link text to show retailer name if possible
+                    const domain = new URL(url).hostname.replace('www.', '');
+                    const retailerName = domain.split('.')[0];
+                    link.textContent = retailerName.charAt(0).toUpperCase() + retailerName.slice(1) + ' →';
+                } catch (e) {
+                    // Invalid URL, keep default
+                    link.href = '#';
+                }
+            } else {
+                link.href = '#';
+                link.textContent = 'Add Link →';
+            }
+        }
+
+        // Update item numbers after deletion
+        function updateNumbers() {
+            const items = document.querySelectorAll('.gift-number');
+            items.forEach((num, index) => {
+                num.textContent = index + 1;
+            });
+        }
+
+        // Save list to localStorage
+        function saveList() {
+            const listHTML = document.getElementById('giftList').innerHTML;
+            localStorage.setItem('holidayWishlist', listHTML);
+            localStorage.setItem('wishlistDate', new Date().toISOString());
+        }
+
+        // Load list from localStorage
+        function loadList() {
+            const savedList = localStorage.getItem('holidayWishlist');
+            if (savedList) {
+                document.getElementById('giftList').innerHTML = savedList;
+            }
+            
+            const savedDate = localStorage.getItem('wishlistDate');
+            if (savedDate) {
+                const date = new Date(savedDate);
+                document.getElementById('updateDate').textContent = date.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+            }
+        }
+
+        // Load saved list on page load
+        window.addEventListener('load', loadList);
+
+        // Auto-save when leaving the page
+        window.addEventListener('beforeunload', () => {
+            if (document.body.classList.contains('edit-mode')) {
+                saveList();
+            }
+        });
+    </script>
+</body>
+</html>
